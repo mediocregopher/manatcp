@@ -38,9 +38,11 @@ type readWrap struct {
 // A connection to a server which uses the following paradigm for communication:
 //
 // * Commands are sent to the server, and a response to those commands may or
-//   not be sent back.
+// not be sent back.
+//
 // * At any time, even during a command, the server may send an arbitrary
-//   "push" message to the client.
+// "push" message to the client.
+//
 // * The server or client may close their connection at any time.
 //
 // Conn handles the command/response sequence as well as putting push messages
