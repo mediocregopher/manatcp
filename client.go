@@ -54,7 +54,6 @@ type Conn struct {
 	buf     *bufio.ReadWriter
 	client  Client
 	readCh  chan *readWrap
-	closeCh chan struct{}
 
 	// Channel onto-which all push messages are put. This must be read from at
 	// all times or execution inside Conn will be blocked. This channel is
