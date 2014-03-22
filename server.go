@@ -33,13 +33,14 @@ type ServerClient interface {
 	// whether or not the connection should be closed (true if so).
 	Write(*bufio.Writer, interface{}) bool
 
-	// Once a command is read off the connection, it is handled with this
-	// method. Takes in the command read off the connection, returns a response
-	// (which will be written with Write). Also returns whether or not the
-	// connection should be closed (true if so). If the connection should be
-	// closed and the response is NOT `nil` that response will attempt to be
-	// written to the connection before closing.
-	HandleCmd(interface{}) (interface{}, bool)
+	// Once a command is read off the connection it is handled with this method.
+	// The return interface{} is what should be sent back to the client. The
+	// First boolean return indicates whether or not to actually send something
+	// (true to send the interface{} back). The final boolean return indicates
+	// whether or not to close the connection (true to close). If both the
+	// boolean returns are true it will attempt to send back the given
+	// interface{} before closing the connection
+	HandleCmd(interface{}) (interface{}, bool, bool)
 
 	// Called when the connection is closed for any reason, either by the client
 	// or server. This is called just before Close is called on the net.Conn
@@ -155,14 +156,12 @@ spinloop:
 			if rw.die {
 				break spinloop
 			}
-			res, die := lc.serverClient.HandleCmd(rw.item)
-			if die {
-				if res != nil {
-					lc.write(res)
-				}
-				break spinloop
+			var dieCmd, dieWrite bool
+			res, sendback, dieCmd := lc.serverClient.HandleCmd(rw.item)
+			if sendback {
+				dieWrite = lc.write(res)
 			}
-			if die = lc.write(res); die {
+			if dieCmd || dieWrite {
 				break spinloop
 			}
 

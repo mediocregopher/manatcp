@@ -71,14 +71,14 @@ func (_ ExServerClient) Write(buf *bufio.Writer, item interface{}) bool {
 	return false
 }
 
-func (_ ExServerClient) HandleCmd(cmd interface{}) (interface{}, bool) {
+func (_ ExServerClient) HandleCmd(cmd interface{}) (interface{}, bool, bool) {
 	log.Printf("SERVER: received '%s' from the client", string(cmd.([]byte)))
 	cmdB := cmd.([]byte)
 	res := make([]byte, 1, len(cmdB)+1)
 	res[0] = '~'
 	res = append(res, cmdB...)	
 	log.Printf("SERVER: sending back '%s'", string(res))
-	return res, false
+	return res, true, false
 }
 
 func (_ ExServerClient) Closing() {
@@ -95,7 +95,6 @@ func serverClientSpin(lc *manatcp.ListenerConn) {
 			case <-tick:
 				log.Println("SERVER: Pushing HI to the client")
 				lc.PushCh <- []byte("HI")
-				log.Println("SERVER: Pushed")
 			case <-lc.CloseCh:
 				return
 		}
