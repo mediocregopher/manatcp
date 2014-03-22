@@ -35,20 +35,10 @@ type readWrap struct {
 	die  bool
 }
 
-// A connection to a server which uses the following paradigm for communication:
-//
-// * Commands are sent to the server, and a response to those commands may or
-// not be sent back.
-//
-// * At any time, even during a command, the server may send an arbitrary
-// "push" message to the client.
-//
-// * The server or client may close their connection at any time.
-//
 // Conn handles the command/response sequence as well as putting push messages
-// into the PushCh. It is meant to be interacted with in a single-threaded
-// manner (with the exception of PushCh, which can be read from in a separate
-// go-routine).
+// from the server into the PushCh. It is meant to be interacted with in a
+// single-threaded manner (with the exception of PushCh, which can be read from
+// in a separate go-routine).
 type Conn struct {
 	conn    net.Conn
 	buf     *bufio.ReadWriter
