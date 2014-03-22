@@ -42,10 +42,11 @@ func (_ ExClient) Write(buf *bufio.Writer, item interface{}) (error, bool) {
 
 type ExServer struct {}
 
-func (_ ExServer) Connected(lc *manatcp.ListenerConn) manatcp.ServerClient {
+func (_ ExServer) Connected(
+	lc *manatcp.ListenerConn) (manatcp.ServerClient, bool) {
 	log.Println("SERVER: new client")
 	go serverClientSpin(lc)
-	return &ExServerClient{}
+	return &ExServerClient{}, false
 }
 
 type ExServerClient struct {}
