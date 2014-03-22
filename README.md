@@ -13,7 +13,7 @@ If you're using [goat][goat]:
 ```yaml
     - loc: https://github.com/mediocregopher/manatcp.git
       type: git
-      ref: v0.2.0
+      ref: v0.2.1
       path: github.com/mediocregopher/manatcp
 ```
 

@@ -12,8 +12,10 @@ type Server interface {
 
 	// Called when a client initiates a connection. Returns an initialized
 	// instance of a ServerClient which is unique to this new connection. The
-	// ListenerConn passed in is unique to this connection as well.
-	Connected(*ListenerConn) ServerClient
+	// ListenerConn passed in is unique to this connection as well. Also returns
+	// a boolean indicating whether the client should be closed immediately
+	// (true if so)
+	Connected(*ListenerConn) (ServerClient, bool)
 }
 
 // A ServerClient is an interface over a single client connection to a Server.
@@ -95,8 +97,13 @@ func (l *Listener) spin() {
 			CloseCh: make(chan struct{}),
 			PushCh:  make(chan interface{}),
 		}
-		lc.serverClient = l.server.Connected(&lc)
-		go lc.spin()
+		var die bool
+		lc.serverClient, die = l.server.Connected(&lc)
+		if !die {
+			go lc.spin()
+		} else {
+			conn.Close()
+		}
 	}
 }
 
