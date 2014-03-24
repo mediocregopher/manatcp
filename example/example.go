@@ -115,6 +115,7 @@ func main() {
 			log.Fatal(err)
 		}
 
+	forloop:
 		for {
 			select {
 			case <-time.After(5 * time.Second):
@@ -125,7 +126,7 @@ func main() {
 			case push, ok := <-conn.PushCh:
 				if !ok {
 					log.Println("CLIENT: PushCh closed")
-					break
+					break forloop
 				}
 				log.Printf("CLIENT: Got push: '%s'", string(push.([]byte)))
 			}
