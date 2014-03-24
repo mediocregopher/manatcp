@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/mediocregopher/manatcp"
-	"bytes"
 	"bufio"
-	"time"
+	"bytes"
+	"github.com/mediocregopher/manatcp"
 	"log"
+	"time"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ func (_ ExClient) Write(buf *bufio.Writer, item interface{}) (error, bool) {
 ////////////////////////////////////////////////////////////////////////////////
 // Server definition
 
-type ExServer struct {}
+type ExServer struct{}
 
 func (_ ExServer) Connected(
 	lc *manatcp.ListenerConn) (manatcp.ServerClient, bool) {
@@ -49,7 +49,7 @@ func (_ ExServer) Connected(
 	return &ExServerClient{}, false
 }
 
-type ExServerClient struct {}
+type ExServerClient struct{}
 
 func (_ ExServerClient) Read(buf *bufio.Reader) (interface{}, bool) {
 	l, err := buf.ReadBytes('\n')
@@ -77,7 +77,7 @@ func (_ ExServerClient) HandleCmd(cmd interface{}) (interface{}, bool, bool) {
 	cmdB := cmd.([]byte)
 	res := make([]byte, 1, len(cmdB)+1)
 	res[0] = '~'
-	res = append(res, cmdB...)	
+	res = append(res, cmdB...)
 	log.Printf("SERVER: sending back '%s'", string(res))
 	return res, true, false
 }
@@ -93,11 +93,11 @@ func serverClientSpin(lc *manatcp.ListenerConn) {
 	tick := time.Tick(10 * time.Second)
 	for {
 		select {
-			case <-tick:
-				log.Println("SERVER: Pushing HI to the client")
-				lc.PushCh <- []byte("HI")
-			case <-lc.CloseCh:
-				return
+		case <-tick:
+			log.Println("SERVER: Pushing HI to the client")
+			lc.PushCh <- []byte("HI")
+		case <-lc.CloseCh:
+			return
 		}
 	}
 }

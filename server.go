@@ -118,7 +118,7 @@ type ListenerConn struct {
 	// client. This channel can be written to by any number of go-routines
 	// safely, up until Closing is called on the associated ServerClient. As
 	// soon as that method returns pushing to this channel will cause a panic.
-	PushCh       chan interface{}
+	PushCh chan interface{}
 }
 
 func (lc *ListenerConn) read(readCh chan *readWrap) {

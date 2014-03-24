@@ -1,8 +1,8 @@
 package manatcp
 
 import (
-	"net"
 	"bufio"
+	"net"
 	"time"
 )
 
@@ -40,15 +40,15 @@ type readWrap struct {
 // single-threaded manner (with the exception of PushCh, which can be read from
 // in a separate go-routine).
 type Conn struct {
-	conn    net.Conn
-	buf     *bufio.ReadWriter
-	client  Client
-	readCh  chan *readWrap
+	conn   net.Conn
+	buf    *bufio.ReadWriter
+	client Client
+	readCh chan *readWrap
 
 	// Channel onto-which all push messages are put. This must be read from at
 	// all times or execution inside Conn will be blocked. This channel is
 	// closed when either the client or server terminate the connection.
-	PushCh  chan interface{}
+	PushCh chan interface{}
 }
 
 // Connects to a server over tcp and initializes a Conn if successful.
@@ -60,11 +60,11 @@ func Dial(c Client, address string) (*Conn, error) {
 	rbuf := bufio.NewReader(tconn)
 	wbuf := bufio.NewWriter(tconn)
 	conn := Conn{
-		conn:    tconn,
-		buf:     bufio.NewReadWriter(rbuf, wbuf),
-		client:  c,
-		readCh:  make(chan *readWrap),
-		PushCh:  make(chan interface{}),
+		conn:   tconn,
+		buf:    bufio.NewReadWriter(rbuf, wbuf),
+		client: c,
+		readCh: make(chan *readWrap),
+		PushCh: make(chan interface{}),
 	}
 	go conn.spin()
 	return &conn, nil
@@ -96,7 +96,7 @@ func (conn *Conn) cmd(cmd interface{}, bg bool) (interface{}, error, bool) {
 	} else if bg {
 		return nil, nil, false
 	}
-	
+
 	if err = conn.buf.Writer.Flush(); err != nil {
 		return nil, err, true
 	}
