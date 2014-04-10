@@ -123,7 +123,10 @@ type ListenerConn struct {
 
 func (lc *ListenerConn) read(readCh chan *readWrap) {
 	item, die := lc.serverClient.Read(lc.buf.Reader)
-	readCh <- &readWrap{item, nil, die}
+	select {
+	case readCh <- &readWrap{item, nil, die}:
+	case <-lc.CloseCh:
+	}
 }
 
 func (lc *ListenerConn) groundPushCh(done chan struct{}) {
