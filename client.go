@@ -87,6 +87,7 @@ func (conn *Conn) spin() {
 	}
 	conn.conn.Close()
 	close(conn.PushCh)
+	conn.client = nil
 }
 
 func (conn *Conn) cmd(cmd interface{}, bg bool) (interface{}, error, bool) {

@@ -192,6 +192,7 @@ spinloop:
 	close(doneClosing)
 	close(lc.PushCh)
 	close(lc.CloseCh)
+	lc.serverClient = nil
 
 }
 
