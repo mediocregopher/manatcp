@@ -53,7 +53,14 @@ type Conn struct {
 
 // Connects to a server over tcp and initializes a Conn if successful.
 func Dial(c Client, address string) (*Conn, error) {
-	tconn, err := net.Dial("tcp", address)
+	return DialTimeout(c, address, 10 * time.Second)
+}
+
+// Same as a Dial, but includes a timeout
+func DialTimeout(
+	c Client, address string, timeout time.Duration) (*Conn, error) {
+
+	tconn, err := net.DialTimeout("tcp", address, timeout)
 	if err != nil {
 		return nil, err
 	}
